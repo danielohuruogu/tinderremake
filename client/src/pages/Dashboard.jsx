@@ -42,27 +42,29 @@ const Dashboard = () => {
     const updateMatches = async (matchedUserId) => {
         try
         {
+            // add a match if someone swipes right on a person
             await axios.put('http://localhost:8000/addmatch', {
+                // passing through user id
                 userId,
+                // and the id of the swiped person
                 matchedUserId
             });
+            // getUser again to refresh the people that have been matched with the user
             getUser();
         } catch(err) {
-
+            console.log(err);
         }
     }
 
     // useEffect to get a new user's data to the dashboard if the cookie changes
-    useEffect(()=> {
+    useEffect(() => {
         getUser();
-        getGenderedUsers();
-    }, [
-      // user,
-      // genderedUsers
-    ]);
+    }, []);
 
-    console.log('user', user);
-    console.log('gendered users', genderedUsers)
+    useEffect(()=> {
+        if (user)
+        getGenderedUsers();
+    }, [user])
 
     const swiped = (direction, swipedUserId) => {
       
@@ -77,19 +79,28 @@ const Dashboard = () => {
       console.log(name + ' left the screen!')
     }
 
+    // will provide an array of user ids that the logged in user has matched with,
+    // with the logged in user's id tagged on to the end
+    const matchedUserIds = user?.matches.map(({ user_id }) => user_id).concat(userId);
+
+    // filter the matches so that previously matched users don't show up again
+    const filteredMatches = genderedUsers?.filter((genderedUser) => {
+        return !matchedUserIds.includes(genderedUser.user_id);
+    });
+
     return (
         <>
-        { user && 
+        { (user && genderedUsers ) && 
             <div className="dashboard">
                 <ChatContainer
                     user={user}
                 />
                 <div className="swipe-container">
                     <div className="card-container">
-                        {genderedUsers.map((user_interest) =>
+                        {filteredMatches.map((user_interest) =>
                             <TinderCard
                                 className='swipe'
-                                key={user_interest.first_name}
+                                key={user_interest.user_id}
                                 onSwipe={(dir) => swiped(dir, user_interest.user_id)}
                                 onCardLeftScreen={() => outOfFrame(user_interest.first_name)}
                                 >

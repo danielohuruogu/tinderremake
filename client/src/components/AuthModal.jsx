@@ -16,9 +16,6 @@ const AuthModal = (props) => {
 
     let navigate = useNavigate()
 
-    // console.log(email, password, confirmPassword);
-    // console.log(isSignUp);
-
     const handleClick = () => {
         setShowModal(false);
     }

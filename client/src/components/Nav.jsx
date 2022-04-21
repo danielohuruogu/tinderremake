@@ -4,14 +4,12 @@ import React from 'react'
 
 const Nav = (props) => {
 
-    const { showModal, setShowModal, minimal, setIsSignUp } = props;
+    const { showModal, setShowModal, minimal, setIsSignUp, authToken } = props;
 
     const handleClick = () => {
         setShowModal(true);
         setIsSignUp(false);
     }
-
-    const authToken = false;
     
     return (
         <nav>

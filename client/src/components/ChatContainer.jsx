@@ -5,6 +5,8 @@ import ChatDisplay from './ChatDisplay'
 
 const ChatContainer = (props) => {
     const { user } = props;
+    // setting the state for whether a match has been clicked
+    const [clickedUser, setClickedUser] = React.useState(null);
 
     return (
         <div className="chat-container">
@@ -13,13 +15,25 @@ const ChatContainer = (props) => {
                 user={user}
             />
             <div>
-                <button className="option">Matches</button>
-                <button className="option">Chat</button>
+                {/* if the matches header gets clicked, there is no user currently being clicked - set to null */}
+                <button className="option" onClick={() => setClickedUser(null)}>Matches</button>
+                {/* if there is a user currently clicked on, disable this option */}
+                <button className="option" disabled={!clickedUser}>Chat</button>
             </div>
 
-            <MatchesDisplay/>
-
-            <ChatDisplay/>
+            {/* if a user is presently clicked, show the chat display */}
+            {clickedUser ?
+                <ChatDisplay
+                    user={user}
+                    clickedUser={clickedUser}
+                />
+                :
+            // if not, show the matches display, to be able to click a user
+                <MatchesDisplay
+                    matches={user.matches}
+                    setClickedUser={setClickedUser}
+                />
+            }
         </div>
     )
 }
